@@ -21,7 +21,7 @@ class blkchn:
         self.get_eth_usd_price()
 
 
-    def get_transactions_by_type(self, type):
+    def tx_get_by_type(self, type):
 
         # Etherscan API endpoint
         self.url_etherscan = "https://api.etherscan.io/api"
@@ -64,12 +64,17 @@ class blkchn:
         return value_ether, value_usd
 
 
-    def list(self):
-        tx_list=[]
-        tx_list += self.get_transactions_by_type( "txlist")
-        tx_list += self.get_transactions_by_type( "txlistinternal")
-        if tx_list:
-            for tx in tx_list[:100]:  # Limit to  100 transactions
+    def tx_get(self):
+        self.tx_list=[]
+        self.tx_list += self.tx_get_by_type( "txlist")
+        self.tx_list += self.tx_get_by_type( "txlistinternal")
+
+    def tx_print(self):
+        self.tx_list=[]
+        self.tx_list += self.tx_get_by_type( "txlist")
+        self.tx_list += self.tx_get_by_type( "txlistinternal")
+        if self.tx_list:
+            for tx in self.tx_list[:100]:  # Limit to  100 transactions
                 tx_datetime = datetime.fromtimestamp( int(tx["timeStamp"]))
                 value_ether, value_usd = self.get_ether_and_usd_value(self.web3, int(tx["value"]))
                 gas_ether, gas_usd = self.get_ether_and_usd_value(self.web3, int(tx["gasUsed"]))
@@ -82,4 +87,5 @@ class blkchn:
 
 
 b1=blkchn()
-b1.list()
+b1.tx_get()
+b1.tx_print()
